@@ -1,0 +1,7 @@
+{% if field_errors %}
+  <ul class="mt-1 text-sm text-error">
+    {% for error in field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block breadcrumbs %}
+  <li>
+    <span class="inline-flex items-center gap-2 font-bold">
+      <span class="flex items-center justify-center size-4"><i class="fa-solid fa-newspaper"></i></span>
+      Tin tức
+    </span>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <h4 class="mb-4 text-xl font-bold">Tất Cả Tin Tức</h4>
+
+  <section id="blogs">
+    {% if paginator %}
+      {% include 'core/blogs_grid.html' with queryset=paginator %}
+      <c-pagination />
+    {% else %}
+      <div class="flex flex-col items-center justify-center px-6 py-8 font-bold rounded-md gap-y-3 bg-base-200">
+        Hiện tại chưa có tin tức
+        <a href="{% url 'blogs' %}" class="btn btn-sm btn-primary">
+          <i class="fa-solid fa-arrow-left"></i>
+          Quay lại
+        </a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load util_filters %}
+
+{% block breadcrumbs %}
+  <li>
+    <a href="{% url 'products' %}" class="inline-flex items-center gap-2">
+      <span class="flex items-center justify-center size-4"><i class="fa-solid fa-cubes"></i></span>
+      Tất cả sản phẩm
+    </a>
+  </li>
+  <li>
+    <span class="inline-flex items-center gap-2 font-bold">{{ product.name }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <section id="detail">
+    <div class="flex gap-4 h-96">
+      <div class="flex items-center justify-center border rounded-lg w-80">
+        <img src="{{ product.image.url }}" alt="image" />
+      </div>
+      <div class="space-y-6">
+        <div class="leading-3">
+          <h5 class="text-xl font-bold">{{ product.name }}</h5>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-1">
+              <div class="rating rating-sm">
+                <input type="radio" name="rating-2" class="bg-orange-400 mask mask-star-2" />
+                <input type="radio" name="rating-2" class="bg-orange-400 mask mask-star-2" />
+                <input type="radio" name="rating-2" class="bg-orange-400 mask mask-star-2" />
+                <input type="radio" name="rating-2" class="bg-orange-400 mask mask-star-2" checked />
+                <input type="radio" name="rating-2" class="bg-orange-400 mask mask-star-2" />
+              </div>
+              <span class="text-sm font-bold text-orange-400">(100)</span>
+            </div>
+            <span class="text-sm font-bold text-primary">04 <span class="font-normal text-gray-400">đã bán</span></span>
+          </div>
+        </div>
+
+        <div class="">
+          {% if product.get_discount_percentage %}
+            <div class="flex gap-2 font-semibold">
+              <span class="text-sm text-gray-400 line-through">{{ product.old_price|int_comma }} đ</span>
+              <span class="badge badge-sm badge-error">Giảm {{ product.get_discount_percentage }}%</span>
+            </div>
+            <span class="text-2xl font-bold text-primary">{{ product.price|int_comma }} đ</span>
+          {% else %}
+            <span class="text-2xl font-bold text-primary">{{ product.price|int_comma }} đ</span>
+          {% endif %}
+        </div>
+
+        <form action="" method="post" class="space-y-3">
+          {% csrf_token %}
+
+          <div class="flex items-center gap-3">
+            {% if product.quantity > 0 %}
+              <div class="join">
+                <div class="btn btn-sm join-item" onclick="quantityUpdate(-1,'',false,{{ product.quantity }})">
+                  <i class="fa-solid fa-minus"></i>
+                </div>
+                <div class="">
+                  {# prettier-ignore #}
+                  <input 
+                  product-quantity-input
+                  type="number"
+                  name="q"
+                  class="w-12 text-center join-item input input-sm input-bordered no-spinner"
+                  value="1"
+                  min="1"
+                  max="{{product.quantity}}"
+                  required />
+                </div>
+                <div class="btn btn-sm join-item" onclick="quantityUpdate(1,'',false,{{ product.quantity }})">
+                  <i class="fa-solid fa-plus"></i>
+                </div>
+              </div>
+            {% else %}
+              <div class="join">
+                <div class="btn btn-sm join-item btn-disabled" onclick="quantityUpdate(-1,'',false,{{ product.quantity }})">
+                  <i class="fa-solid fa-minus"></i>
+                </div>
+                <div class="">
+                  {# prettier-ignore #}
+                  <input 
+                  product-quantity-input
+                  type="number"
+                  name="q"
+                  class="w-12 text-center select-none join-item input input-sm input-bordered no-spinner"
+                  value="1"
+                  min="1"
+                  max="{{product.quantity}}"
+                  required 
+                  disabled/>
+                </div>
+                <div class="btn btn-sm join-item btn-disabled" onclick="quantityUpdate(1,'',false,{{ product.quantity }})">
+                  <i class="fa-solid fa-plus"></i>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="text-sm text-gray-400">
+              <span class="mr-1 font-bold text-primary">{{ product.quantity }}</span>
+              Sản phảm có sẵn
+            </div>
+          </div>
+
+          <div class="flex gap-4">
+            {% if product.quantity > 0 %}
+              <button type="submit" class="btn btn-sm btn-outline">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Thêm vào giỏ hàng
+              </button>
+              <div class="btn btn-sm btn-primary" onclick="createOneOrder()">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Mua ngay
+              </div>
+            {% else %}
+              <button type="submit" class="btn btn-sm btn-outline btn-disabled">
+                <i class="fa-solid fa-cart-shopping"></i>
+                Thêm vào giỏ hàng
+              </button>
+              <div class="btn btn-sm btn-primary btn-disabled" onclick="createOneOrder()">
+                <i class="fa-solid fa-bag-shopping"></i>
+                Mua ngay
+              </div>
+            {% endif %}
+          </div>
+        </form>
+
+        <form id="create-order" action="" method="post" class="hidden">
+          {% csrf_token %}
+
+          <input product-quantity-input type="number" name="q" value="1" min="1" max="{{ product.quantity }}" />
+          <input type="checkbox" name="buy-now" checked />
+        </form>
+
+        <div class="flex flex-wrap gap-2 lowercase">
+          {% for tag in product.tags.all %}
+            <a href="{% url 'search' %}?s={{ tag.name|lower }}" class="badge badge-outline badge-primary">
+              <i class="mr-1 fa-solid fa-tag fa-sm"></i>
+              {{ tag.name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="other-detail">
+    <div role="tablist" class="tabs tabs-lifted">
+      <input type="radio" name="product_tabs" role="tab" class="tab" aria-label="Mô tả" checked />
+      {% if product.description %}
+        <div role="tabpanel" class="p-6 space-y-4 tab-content bg-base-100 border-base-300 rounded-box">{{ product.description|safe }}</div>
+      {% else %}
+        <div role="tabpanel" class="p-6 tab-content bg-base-100 border-base-300 rounded-box">Không có mô tả sản phẩm</div>
+      {% endif %}
+
+      <input type="radio" name="product_tabs" role="tab" class="tab" aria-label="Đánh giá" />
+      <div role="tabpanel" class="p-6 tab-content bg-base-100 border-base-300 rounded-box">Coming soon</div>
+    </div>
+  </section>
+{% endblock %}

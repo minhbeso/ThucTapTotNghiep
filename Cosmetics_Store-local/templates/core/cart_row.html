@@ -1,0 +1,83 @@
+{% load util_filters %}
+
+<tr>
+  <th>
+    {# prettier-ignore #}
+    <label>
+      {% if cart_item.id|stringformat:"s" in selected_ids %}
+      <input 
+        cart-item-checkbox
+        id="{{ cart_item.id }}-checkbox" 
+        type="checkbox" 
+        class="checkbox checkbox-sm" 
+        onchange="onCartItemSelected(event)"
+        checked />
+      {% else %}
+      <input 
+        cart-item-checkbox
+        id="{{ cart_item.id }}-checkbox" 
+        type="checkbox" 
+        class="checkbox checkbox-sm" 
+        onchange="onCartItemSelected(event)" />
+      {% endif %}
+    </label>
+  </th>
+  <td>
+    <div class="flex items-center gap-3">
+      <div class="avatar">
+        <div class="w-20 h-20 mask mask-squircle">
+          <img src="{{ product.image.url }}" alt="Avatar Tailwind CSS Component" />
+        </div>
+      </div>
+      <div class="truncate">
+        <div class="font-bold">{{ product.name }}</div>
+        <div class="text-sm opacity-50">{{ product.category }} - {{ product.brand }}</div>
+      </div>
+    </div>
+  </td>
+  <td class="truncate">
+    {% if product.get_discount_percentage %}
+      <div class="flex gap-2 font-semibold">
+        <span class="text-xs text-gray-400 line-through">{{ product.old_price|int_comma }} đ</span>
+        <span class="badge badge-xs badge-error">Giảm {{ product.get_discount_percentage }}%</span>
+      </div>
+      <span class="font-bold">{{ product.price|int_comma }} đ</span>
+    {% else %}
+      <span class="font-bold">{{ product.price|int_comma }} đ</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="join">
+      <div class="btn btn-xs join-item" onclick="quantityUpdate(-1,'{{ cart_item.id }}',true,{{ product.quantity }})">
+        <i class="fa-solid fa-minus"></i>
+      </div>
+      <form id="{{ cart_item.id }}-form" action="{% url 'cart_update' cart_item.id %}" method="post">
+        {% csrf_token %}
+
+        {# prettier-ignore #}
+        <input 
+          id="{{ cart_item.id }}-quantity"
+          product-quantity-input
+          type="number"
+          name="q"
+          class="w-12 text-center join-item input input-xs input-bordered no-spinner"
+          value="{{ cart_item.quantity }}"
+          min="1"
+          max="{{product.quantity}}"
+          required />
+      </form>
+      <div class="btn btn-xs join-item" onclick="quantityUpdate(1,'{{ cart_item.id }}',true,{{ product.quantity }})">
+        <i class="fa-solid fa-plus"></i>
+      </div>
+    </div>
+  </td>
+  <th>
+    <span class="text-lg font-bold truncate text-end text-primary">
+      <span id="{{ cart_item.id }}-total-price" data-total-price="{{ cart_item.get_total_price }}">{{ cart_item.get_total_price|int_comma }}</span>
+      đ
+    </span>
+  </th>
+  <th>
+    <a href="{% url 'cart_delete' cart_item.id %}" class="font-bold btn btn-xs btn-outline btn-error">Xóa</a>
+  </th>
+</tr>

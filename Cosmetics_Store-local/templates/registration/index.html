@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block breadcrumbs %}
+  <li>
+    {% if 'sign_in' in request.path %}
+      <span class="inline-flex items-center gap-2 font-bold">Đăng nhập tài khoản</span>
+    {% else %}
+      <span class="inline-flex items-center gap-2 font-bold">Đăng ký tài khoản</span>
+    {% endif %}
+  </li>
+{% endblock %}
+
+{% block content %}
+  <section id="sign-in">
+    <div class="flex items-center justify-center">
+      {% if 'sign_in' in request.path %}
+        {% include 'registration/sign_in_form.html' %}
+      {% else %}
+        {% include 'registration/sign_up_form.html' %}
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

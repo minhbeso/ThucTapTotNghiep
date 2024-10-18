@@ -1,0 +1,60 @@
+<label class="w-fit form-control">
+  <div class="label">
+    <span class="label-text">Danh mục</span>
+  </div>
+  <select select-two name="category" class="w-fit select select-bordered select-sm">
+    {% for x, y in filter.form.fields.category.choices %}
+      <p>{{ filter.form.category.value }}</p>
+      {% if filter.form.category.value|stringformat:'s' == x|stringformat:'s' %}
+        <option value="{{ x }}" selected>{{ y }}</option>
+      {% else %}
+        <option value="{{ x }}">{{ y }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</label>
+
+<label class="w-fit form-control">
+  <div class="label">
+    <span class="label-text">Thương hiệu</span>
+  </div>
+  <select select-two name="brand" class="w-fit select select-bordered select-sm">
+    {% for x, y in filter.form.fields.brand.choices %}
+      {% if filter.form.brand.value|stringformat:'s' == x|stringformat:'s' %}
+        <option value="{{ x }}" selected>{{ y }}</option>
+      {% else %}
+        <option value="{{ x }}">{{ y }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</label>
+
+<label class="w-fit form-control">
+  <div class="label">
+    <span class="label-text">{{ filter.form.fields.status.label }}</span>
+  </div>
+  <select name="status" class="w-fit select select-bordered select-sm">
+    {% for x, y in filter.form.fields.status.choices %}
+      {% if filter.form.status.value == x %}
+        <option value="{{ x }}" selected>{{ y }}</option>
+      {% else %}
+        <option value="{{ x }}">{{ y }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</label>
+
+<label class="w-fit form-control">
+  <div class="label">
+    <span class="label-text">Sắp xếp theo</span>
+  </div>
+  <select name="order" class="w-fit select select-bordered select-sm">
+    {% for x, y in filter.form.fields.order.choices %}
+      {% if filter.form.order.value|first == x or x == '-created_at' and filter.form.order.value == None %}
+        <option value="{{ x }}" selected>{{ y }}</option>
+      {% else %}
+        <option value="{{ x }}">{{ y }}</option>
+      {% endif %}
+    {% endfor %}
+  </select>
+</label>

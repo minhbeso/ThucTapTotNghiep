@@ -1,0 +1,68 @@
+<form action="" method="post" class="w-[80%] space-y-4">
+  {% csrf_token %}
+
+  <h1 class="text-2xl font-bold text-center">Đăng ký tài khoản</h1>
+
+  {% if form.non_field_errors %}
+    <div class="p-4 rounded-md bg-error">
+      <ul>
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="grid grid-cols-2 gap-4">
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Họ</span>
+      </div>
+      <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" placeholder="Họ" class="input input-bordered" minlength="2" maxlength="150" required />
+    </label>
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Tên</span>
+      </div>
+      <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" placeholder="Tên" class="input input-bordered" minlength="2" maxlength="150" required />
+    </label>
+    {% include 'patials/field_error.html' with field_errors=form.first_name.errors %}
+  </div>
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Email</span>
+    </div>
+    <input type="text" name="email" value="{{ form.email.value|default:'' }}" placeholder="Email" class="input input-bordered" maxlength="150" required />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.email.errors %}
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Tên đăng nhập</span>
+    </div>
+    <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="Tên đăng nhập" class="input input-bordered" minlength="6" maxlength="150" required autocomplete="off" />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.username.errors %}
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Mật khẩu</span>
+    </div>
+    <input type="password" name="password1" placeholder="Mật khẩu" class="input input-bordered" minlength="8" required autocomplete="new-password" />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.password1.errors %}
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Nhập lại mật khẩu</span>
+    </div>
+    <input type="password" name="password2" placeholder="Nhập lại mật khẩu" class="input input-bordered" minlength="8" required autocomplete="new-password" />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.password2.errors %}
+
+  <button type="submit" class="w-full btn btn-primary">Đăng ký</button>
+  <div class="flex">
+    <span>Đã có tài khoản? <a href="{% url 'sign_in' %}" class="font-bold link link-hover link-primary">Đăng nhập ngay</a></span>
+  </div>
+</form>

@@ -1,0 +1,105 @@
+{% load static constant_filters %}
+
+<div class="drawer lg:drawer-open">
+  <input id="drawer-sidebar" type="checkbox" class="drawer-toggle" />
+  <div class="z-20 drawer-side">
+    <label for="drawer-sidebar" aria-label="close sidebar" class="drawer-overlay"></label>
+    <div class="flex flex-col justify-between w-64 min-h-full border-r bg-base-100 text-base-content">
+      <div class="px-3">
+        <div class="my-5">
+          <a href="/" class="flex justify-center"><img src="{% static 'imgs/logo.jpg' %}" alt="logo" class="h-24" /></a>
+        </div>
+
+        <ul>
+          {% get_navbar_links as navbar_links %}
+          {% for link in navbar_links %}
+            <li>
+              <a href="{{ link.href }}" class="justify-start w-full btn btn-ghost">
+                <i class="mr-3 {{ link.icon }} fa-lg"></i>
+                <span class="font-medium">{{ link.label }}</span>
+              </a>
+            </li>
+          {% endfor %}
+
+          <li>
+            <a href="{% url 'cart' %}" class="justify-start w-full btn btn-ghost">
+              <i class="mr-3 fa-solid fa-cart-shopping fa-lg"></i>
+              <span class="font-medium">Giỏ hàng</span>
+
+              {% if user.is_authenticated %}
+                {% get_total_cart_items as total_cart_items %}
+                {% if total_cart_items > 0 %}
+                  <span cart-quantity-label class="ml-auto badge badge-sm badge-primary">{{ total_cart_items }}</span>
+                {% endif %}
+              {% else %}
+                <span cart-quantity-label class="ml-auto badge badge-sm badge-primary">0</span>
+              {% endif %}
+            </a>
+          </li>
+          <li>
+            <label for="search-modal" class="justify-start w-full btn btn-ghost">
+              <i class="mr-3 fa-solid fa-magnifying-glass fa-lg"></i>
+              <span class="font-medium">Tìm kiếm</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      {% if user.is_authenticated %}
+        <div class="flex items-center p-3 border-t">
+          <a href="{% url 'account' %}">
+            {% if 'default' in user.avatar.url %}
+              <div class="flex items-center justify-center rounded-full size-10 bg-secondary text-secondary-content">
+                <i class="fa-solid fa-user fa-lg"></i>
+              </div>
+            {% else %}
+              <div class="avatar">
+                <div class="rounded-full size-10 ring-primary ring-offset-base-100 ring-1 ring-offset-2">
+                  <img src="{{ user.avatar.url }}" alt="avatar" />
+                </div>
+              </div>
+            {% endif %}
+          </a>
+
+          <div class="flex items-center justify-between w-full mx-3 truncate">
+            <div class="leading-4">
+              {% if user.first_name %}
+                <h4 class="font-semibold">{{ user.first_name }}</h4>
+              {% else %}
+                <h4 class="font-semibold">{{ user.username }}</h4>
+              {% endif %}
+              <span class="text-xs text-gray-600">{{ user.last_name }}</span>
+            </div>
+          </div>
+
+          <div class="">
+            <div class="dropdown dropdown-top lg:dropdown-end">
+              <div tabindex="0" class="btn btn-ghost btn-circle size-10 min-h-10">
+                <i class="fa-solid fa-ellipsis-vertical fa-lg"></i>
+              </div>
+              <ul tabindex="0" class="p-2 border border-b-0 shadow dropdown-content menu bg-base-100 rounded-box w-52">
+                <li>
+                  <a href="{% url 'account' %}">Thông tin tài khoản</a>
+                </li>
+                <li>
+                  <a href="{% url 'orders' %}">Đơn hàng của bạn</a>
+                </li>
+                <li>
+                  <a href="{% url 'transaction_history' %}">Lịch sử giao dịch</a>
+                </li>
+                <li>
+                  <a href="{% url 'sign_out' %}">Đăng xuất</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="flex gap-4 p-3 border-t">
+          <a href="{% url 'sign_in' %}" class="grow btn btn-sm btn-outline btn-secondary">Đăng nhập</a>
+          <a href="{% url 'sign_up' %}" class="grow btn btn-sm btn-primary">Đăng ký</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

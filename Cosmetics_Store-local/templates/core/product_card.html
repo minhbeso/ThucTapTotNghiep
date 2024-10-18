@@ -1,0 +1,65 @@
+{% load util_filters %}
+
+{# prettier-ignore #}
+<div class="relative transition-all duration-500 border border-b-0 shadow-md cursor-pointer card bg-base-100 card-compact hover:scale-105 
+  {% if one_row %}
+    {% if forloop.counter == 3 %} hidden md:flex {% endif %}
+    {% if forloop.counter == 4 %} hidden lg:flex {% endif %}
+    {% if forloop.counter >= 5 %} hidden 2xl:flex {% endif %}
+  {% endif %}  
+">
+  {% if product.get_new_state %}
+    <span class="absolute font-semibold top-3 left-3 badge badge-secondary">Mới</span>
+  {% endif %}
+
+  {% if discount %}
+    <span class="absolute font-semibold top-3 right-3 badge badge-error">- {{ discount }}%</span>
+  {% endif %}
+
+  <figure>
+    <a href="{% url 'product_detail' product.id %}">
+      <img src="{{ product.image.url }}" alt="Shoes" class="h-40" />
+    </a>
+  </figure>
+
+  <div class="card-body">
+    <h2 class="truncate card-title">{{ product.name }}</h2>
+    <div class="items-center justify-between card-actions">
+      <p class="font-semibold">{{ product.price|int_comma }} đ</p>
+      {% if discount %}
+        <p class="font-semibold text-gray-400 line-through text-end">{{ product.old_price|int_comma }} đ</p>
+      {% endif %}
+    </div>
+    <div class="items-center justify-between card-actions">
+      <form action="{% url 'product_detail' product.id %}" method="post" class="m-0">
+        {% csrf_token %}
+
+        <div class="hidden">
+          <input product-quantity-input type="number" name="q" value="1"  />
+          <input type="checkbox" name="buy-now" checked />
+        </div>
+        
+        {% if product.quantity > 0 %}
+          <button type="submit" class="btn btn-sm btn-primary">Mua ngay</button>
+        {% else %}
+          <button type="submit" class="btn btn-sm btn-primary" disabled>Mua ngay</button>
+        {% endif %}
+      </form>
+      <form action="{% url 'product_detail' product.id %}" method="post" class="m-0 ">
+        {% csrf_token %}
+        
+        <div class="hidden">
+          <input product-quantity-input type="number" name="q" value="1"  />
+          <input type="text" name="next_url" value="{{request.path}}{% querystring %}"  />
+        </div>
+
+        {% if product.quantity > 0 %}
+        <button type="submit" class=" btn btn-sm btn-outline btn-secondary"><i class="fa-solid fa-cart-shopping"></i></button>
+        {% else %}
+        <button type="submit" class=" btn btn-sm btn-outline btn-secondary" disabled><i class="fa-solid fa-cart-shopping"></i></button>
+        {% endif %}
+        
+      </form>
+    </div>
+  </div>
+</div>

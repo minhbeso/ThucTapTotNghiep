@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block breadcrumbs %}
+  <li>
+    <span class="inline-flex items-center gap-2 font-bold">
+      <span class="flex items-center justify-center size-4"><i class="fa-solid fa-user"></i></span>
+      Thông tin tài khoản
+    </span>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <h4 class="mb-8 text-xl font-bold text-center">Thông tin tài khoản</h4>
+
+  <section id="sign-in">
+    <div class="flex items-center justify-center">
+      <form action="" method="post" enctype="multipart/form-data" class="w-full md:w-[70%] space-y-4">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="p-4 rounded-md bg-error">
+            <ul>
+              {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+
+        <div class="flex flex-col justify-center items-center !mt-0">
+          <div class="relative avatar group">
+            <div class="absolute w-32 rounded-full">
+              <label for="avatar-change" class="items-center justify-center hidden bg-black cursor-pointer size-32 group-hover:flex bg-opacity-40"><i class="fa-solid fa-camera fa-xl !text-white"></i></label>
+            </div>
+            <div class="w-32 rounded-full ring-primary ring-offset-base-100 ring ring-offset-2">
+              <img id="avatar-img" src="{{ user.avatar.url }}" />
+            </div>
+          </div>
+
+          <div class="mt-2">Avatar</div>
+          <input id="avatar-change" name="avatar" type="file" accept="image/*" class="hidden" onchange="previewAvatar(event, 'avatar-img')" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <label class="form-control">
+            <div class="label">
+              <span class="label-text">Họ</span>
+            </div>
+            <input type="text" name="last_name" value="{{ form.last_name.value }}" placeholder="Họ" class="input input-bordered" minlength="2" maxlength="150" required />
+          </label>
+          <label class="form-control">
+            <div class="label">
+              <span class="label-text">Tên</span>
+            </div>
+            <input type="text" name="first_name" value="{{ form.first_name.value }}" placeholder="Tên" class="input input-bordered" minlength="2" maxlength="150" required />
+          </label>
+          {% include 'patials/field_error.html' with field_errors=form.first_name.errors %}
+        </div>
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Email</span>
+          </div>
+          <input type="text" name="email" value="{{ form.email.value }}" placeholder="Email" class="input input-bordered" maxlength="150" required />
+        </label>
+        {% include 'patials/field_error.html' with field_errors=form.email.errors %}
+
+        <button type="submit" class="w-full btn btn-primary">Lưu thay đổi</button>
+        <div class="flex">
+          <label for="change-password-modal" class="font-bold cursor-pointer text-primary">
+            <i class="mr-1 fa-solid fa-key"></i>
+            Đổi mật khẩu
+          </label>
+        </div>
+      </form>
+    </div>
+  </section>
+  {% if change_password_form.errors %}
+    <input type="checkbox" id="change-password-modal" class="modal-toggle" checked />
+  {% else %}
+    <input type="checkbox" id="change-password-modal" class="modal-toggle" />
+  {% endif %}
+  <div class="modal" role="dialog">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Đổi mật khẩu</h3>
+      <form action="" method="post" class="space-y-3">
+        {% csrf_token %}
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Mật khẩu cũ</span>
+          </div>
+          {# prettier-ignore #}
+          <input 
+            type="password" 
+            name="old_password" 
+            placeholder="Mật khẩu cũ" 
+            value="{{ change_password_form.old_password.value|default:'' }}" 
+            class="input input-bordered" 
+            autocomplete="off" />
+        </label>
+        {% include 'patials/field_error.html' with field_errors=change_password_form.old_password.errors %}
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Mật khẩu mới</span>
+          </div>
+          {# prettier-ignore #}
+          <input 
+            type="password" 
+            name="new_password1" 
+            placeholder="Mật khẩu mới" 
+            value="{{ change_password_form.new_password1.value|default:'' }}" 
+            class="input input-bordered" 
+            minlength="8" 
+            required 
+            autocomplete="off" />
+        </label>
+        {% include 'patials/field_error.html' with field_errors=change_password_form.new_password1.errors %}
+
+        <label class="form-control">
+          <div class="label">
+            <span class="label-text">Nhập lại mật khẩu mới</span>
+          </div>
+          {# prettier-ignore #}
+          <input 
+            type="password" 
+            name="new_password2" 
+            placeholder="Nhập lại mật khẩu mới" 
+            value="{{ change_password_form.new_password2.value|default:'' }}" 
+            class="input input-bordered" 
+            minlength="8" 
+            required 
+            autocomplete="off" />
+        </label>
+        {% include 'patials/field_error.html' with field_errors=change_password_form.new_password2.errors %}
+
+        <input type="checkbox" name="change_password" checked class="hidden" />
+
+        <div class="flex justify-end gap-2">
+          <label for="change-password-modal" class="btn btn-sm btn-outline">Huỷ bỏ</label>
+          <button type="submit" class="btn btn-sm btn-primary">Đổi mật khẩu</button>
+        </div>
+      </form>
+    </div>
+    <label class="modal-backdrop" for="change-password-modal">Close</label>
+  </div>
+{% endblock %}

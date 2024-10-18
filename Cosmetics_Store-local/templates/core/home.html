@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static util_filters %}
+
+{% block content %}
+  <section id="banners">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="col-span-2 overflow-hidden rounded-md cursor-pointer">
+        <img src="{% static 'imgs/banner_1.webp' %}" alt="" class="w-full transition-all duration-500 hover:scale-105" />
+      </div>
+      <div class="col-span-2 overflow-hidden rounded-md cursor-pointer md:col-span-1">
+        <img src="{% static 'imgs/banner_2.webp' %}" alt="" class="w-full transition-all duration-500 hover:scale-105" />
+      </div>
+      <div class="col-span-2 overflow-hidden rounded-md cursor-pointer md:col-span-1">
+        <img src="{% static 'imgs/banner_3.webp' %}" alt="" class="w-full transition-all duration-500 hover:scale-105" />
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="new-products">
+    <h4 class="mb-4 text-xl font-bold">Sản Phẩm Mới</h4>
+
+    {% include 'core/products_grid.html' with queryset=new_products one_row=True %}
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="best-seller-products">
+    <h4 class="mb-4 text-xl font-bold">Sản Phẩm Bán Chạy</h4>
+
+    {% include 'core/products_grid.html' with queryset=best_seller_products one_row=True %}
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="blogs">
+    <h4 class="mb-4 text-xl font-bold">Blogs</h4>
+
+    {% include 'core/blogs_grid.html' with queryset=new_blogs one_row=True %}
+  </section>
+{% endblock %}

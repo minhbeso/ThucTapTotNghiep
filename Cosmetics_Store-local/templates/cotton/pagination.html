@@ -1,0 +1,23 @@
+<div class="flex justify-center mt-8">
+  <div class="join">
+    {% if paginator.has_previous %}
+      <a href="{% querystring page=paginator.previous_page_number %}" class="join-item btn btn-sm"><i class="fa-solid fa-angle-left"></i></a>
+    {% else %}
+      <div class="join-item btn btn-sm btn-disabled">
+        <i class="fa-solid fa-angle-left"></i>
+      </div>
+    {% endif %}
+    {% if paginator.number %}
+      <button class="join-item btn btn-sm">Trang {{ paginator.number }}</button>
+    {% else %}
+      <button class="join-item btn btn-sm">Trang 1</button>
+    {% endif %}
+    {% if paginator.has_next %}
+      <a href="{% querystring page=paginator.next_page_number %}" class="join-item btn btn-sm"><i class="fa-solid fa-angle-right"></i></a>
+    {% else %}
+      <div class="join-item btn btn-sm btn-disabled">
+        <i class="fa-solid fa-angle-right"></i>
+      </div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{% load util_filters %}
+
+{# prettier-ignore #}
+<div class="relative transition-all duration-500 border border-b-0 shadow-md cursor-pointer card bg-base-100 card-compact hover:scale-105 
+  {% if one_row %}
+    {% if forloop.counter == 2 %} hidden md:flex {% endif %}
+    {% if forloop.counter == 3 %} hidden 2xl:flex {% endif %}
+  {% endif %}  
+">
+  <figure>
+    <a href="{% url 'blog_detail' blog.id %}">
+      <img src="{{ blog.thumbnail.url }}" alt="thumbnail" class="h-72" />
+    </a>
+  </figure>
+
+  <div class="card-body">
+    <h2 class="card-title">{{ blog.title|truncatechars:50 }}</h2>
+  </div>
+</div>

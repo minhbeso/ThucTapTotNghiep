@@ -1,0 +1,36 @@
+<form action="" method="post" class="w-[80%] space-y-4">
+  {% csrf_token %}
+
+  <h1 class="text-2xl font-bold text-center">Đăng nhập tài khoản</h1>
+
+  {% if form.non_field_errors %}
+    <div class="p-4 rounded-md bg-error">
+      <ul>
+        {% for error in form.non_field_errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Tên đăng nhập</span>
+    </div>
+    <input type="text" name="username" value="{{ form.username.value|default:'' }}" placeholder="Tên đăng nhập" class="input input-bordered" autocomplete="off" />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.username.errors %}
+
+  <label class="form-control">
+    <div class="label">
+      <span class="label-text">Mật khẩu</span>
+    </div>
+    <input type="password" name="password" placeholder="Mật khẩu" class="input input-bordered" autocomplete="off" />
+  </label>
+  {% include 'patials/field_error.html' with field_errors=form.password.errors %}
+
+  <button type="submit" class="w-full btn btn-primary">Đăng nhập</button>
+  <div class="flex">
+    <span>Chưa có tài khoản? <a href="{% url 'sign_up' %}" class="font-bold link link-hover link-primary">Đăng ký ngay</a></span>
+  </div>
+</form>

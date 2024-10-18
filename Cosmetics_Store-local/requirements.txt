@@ -1,0 +1,17 @@
+Django
+
+django-tailwind
+django-cotton
+django-filter
+django-jazzmin
+django_ckeditor_5
+pillow
+
+# DEPLOY
+# psycopg2-binary
+# dj-database-url
+# django-cloudinary-storage
+
+# DEV
+# django-browser-reload
+# django-debug-toolbar

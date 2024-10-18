@@ -1,0 +1,49 @@
+{% load util_filters %}
+
+<tr>
+  <td>
+    <span class="font-bold">#{{ order.id }}</span>
+  </td>
+  <td>
+    <span class="text-lg font-bold truncate text-end text-primary">
+      <span>{{ order.total_payment|int_comma }}</span>
+      đ
+    </span>
+  </td>
+  <td>
+    {% if order.status == 2 %}
+      <span class="truncate badge badge-outline">{{ order.get_status_display }}</span>
+    {% elif order.status == 3 %}
+      <span class="truncate badge badge-warning badge-outline">{{ order.get_status_display }}</span>
+    {% elif order.status == 4 %}
+      <span class="truncate badge badge-secondary badge-outline">{{ order.get_status_display }}</span>
+    {% elif order.status == 6 %}
+      <span class="truncate badge badge-error badge-outline">{{ order.get_status_display }}</span>
+    {% else %}
+      <span class="truncate badge badge-success badge-outline">{{ order.get_status_display }}</span>
+    {% endif %}
+  </td>
+  <th>
+    <span class="font-bold truncate">{{ order.created_at|natural_time }}</span>
+  </th>
+  <th class="truncate">
+    <a href="{% url 'order_detail' order.id %}" class="font-bold btn btn-xs btn-outline btn-primary"><i class="fa-solid fa-eye"></i></a>
+    {% if not order.status > 3 %}
+      <a href="{% url 'order_cancel' order.id %}" class="font-bold btn btn-xs btn-outline btn-error">Hủy đơn</a>
+    {% else %}
+      <button class="font-bold btn btn-xs btn-outline btn-error" disabled>Hủy đơn</button>
+    {% endif %}
+
+    {% if order.status == 4 %}
+      <a href="{% url 'order_delivered' order.id %}" class="font-bold btn btn-xs btn-primary">Đã nhận</a>
+    {% else %}
+      <button disabled class="font-bold btn btn-xs btn-primary">Đã nhận</button>
+    {% endif %}
+
+    {% comment %} {% if not order.status > 3 or order.status == 6 %}
+      <a href="{% url 'order_delete' order.id %}" class="font-bold btn btn-xs btn-outline btn-error">Xóa</a>
+    {% else %}
+      <button class="font-bold btn btn-xs btn-outline btn-error" disabled>Xóa</button>
+    {% endif %} {% endcomment %}
+  </th>
+</tr>

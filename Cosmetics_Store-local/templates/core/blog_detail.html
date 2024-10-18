@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load util_filters %}
+
+{% block breadcrumbs %}
+  <li>
+    <a href="" class="inline-flex items-center gap-2">
+      <span class="flex items-center justify-center size-4"><i class="fa-solid fa-newspaper"></i></span>
+      Tin tức
+    </a>
+  </li>
+  <li>
+    <span class="inline-flex items-center gap-2 font-bold truncate">{{ blog.title }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <section id="blog_detail" class="px-4 space-y-8">
+    <img src="{{ blog.thumbnail.url }}" alt="thumbnail" class="rounded-md" />
+
+    <h1 class="text-2xl font-bold">{{ blog.title }}</h1>
+    <div class="space-y-4">{{ blog.content|safe }}</div>
+    <div class="flex flex-wrap gap-2 lowercase">
+      {% for tag in blog.tags.all %}
+        <a href="{% url 'search' %}?s={{ tag.name|lower }}" class="badge badge-outline badge-primary">
+          <i class="mr-1 fa-solid fa-tag fa-sm"></i>
+          {{ tag.name }}
+        </a>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

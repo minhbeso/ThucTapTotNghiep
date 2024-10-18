@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load util_filters %}
+
+{% block breadcrumbs %}
+  <li>
+    <a href="{% url 'orders' %}" class="inline-flex items-center gap-2">
+      <span class="flex items-center justify-center size-4"><i class="fa-solid fa-cubes"></i></span>
+      Tất cả đơn hàng
+    </a>
+  </li>
+  <li>
+    <span class="inline-flex items-center gap-2 font-bold">Đơn {{ order.id }}</span>
+  </li>
+{% endblock %}
+
+{% block content %}
+  <section id="order-items">
+    <div class="space-y-1">
+      <h2 class="font-semibold">Đanh sách sản phẩm</h2>
+      <div class="overflow-x-scroll">
+        <table class="table table-xs">
+          <thead>
+            <tr>
+              <th>Sản phẩm</th>
+              <th>Đơn giá</th>
+              <th>Số lượng</th>
+              <th>Tổng tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+              {% include 'registration/order_detail_row.html' with order_item=item product=item.product %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section id="order-info">
+    <div class="space-y-1">
+      <h2 class="font-semibold">Thanh toán</h2>
+      <form action="" method="post" class="flex flex-wrap gap-4 md:justify-between">
+        {% csrf_token %}
+
+        <input type="number" name="total_payment" class="hidden" value="{{ total_payment|floatformat:0 }}" />
+
+        <div class="grid w-full grid-cols-2 gap-2 md:w-fit">
+          <label class="col-span-2 sm:col-span-1 form-control">
+            <div class="label">
+              <span class="label-text">Phương thức thanh toán</span>
+            </div>
+            <select name="payment_method" class="select select-sm select-bordered" required>
+              {% for value, display in form.payment_method.field.choices %}
+                {% if form.payment_method.value == value %}
+                  <option value="{{ value }}" selected>{{ display }}</option>
+                {% else %}
+                  <option value="{{ value }}">{{ display }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </label>
+          <label class="col-span-2 sm:col-span-1 form-control">
+            <div class="label">
+              <span class="label-text">Lời nhắn</span>
+            </div>
+
+            {# prettier-ignore #}
+            <input 
+              type="text" 
+              name="message" 
+              class="input input-sm input-bordered" 
+              placeholder="Lời nhắn cho shop" 
+              value="{{ form.message.value|default:'' }}" 
+              maxlength="500"
+              autocomplete="off" />
+          </label>
+          <label class="col-span-2 form-control">
+            <div class="label">
+              <span class="label-text">Địa chỉ nhận hàng</span>
+            </div>
+
+            {# prettier-ignore #}
+            <input 
+              type="text" 
+              name="address" 
+              class="input input-sm input-bordered" 
+              placeholder="Xã/phường - Quận/huyện - Tỉnh/TP" 
+              value="{{ form.address.value|default:'' }}" 
+              autocomplete="off"
+              minlength="10" 
+              maxlength="500" 
+              required />
+          </label>
+        </div>
+
+        <div class="flex flex-col justify-end w-full gap-2 md:w-64">
+          <div class="">
+            <div class="flex items-center justify-between gap-3 mt-auto">
+              <span class="text-sm text-gray-400">Tổng tiền hàng:</span>
+              <span class="text-sm font-semibold">{{ order.get_total_price|int_comma }} đ</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-gray-400">Phí vận chuyển:</span>
+              <span class="text-sm font-semibold">{{ shipping_fee|int_comma }} đ</span>
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-sm text-gray-400">Tổng thanh toán:</span>
+              <span class="text-xl font-bold text-primary">{{ total_payment|int_comma }} đ</span>
+            </div>
+          </div>
+
+          {# prettier-ignore #}
+          {% if order.status == 1 %}
+            <button type="submit" class="flex justify-end">
+              <div class="w-1/2 btn btn-sm btn-primary">Thanh toán</div>
+            </button>
+          {% elif order.status == 2 %}
+            <div class="flex justify-end">
+              <div class="w-fit badge badge-outline badge-lg">{{ order.get_status_display }}</div>
+            </div>
+          {% elif order.status == 3 %}
+            <div class="flex justify-end">
+              <div class="w-fit badge badge-outline badge-lg badge-warning">{{ order.get_status_display }}</div>
+            </div>
+          {% elif order.status == 4 %}
+            <div class="flex justify-end">
+              <div class="w-fit badge badge-outline badge-lg badge-secondary">{{ order.get_status_display }}</div>
+            </div>
+          {% elif order.status == 6 %}
+            <div class="flex justify-end">
+              <div class="w-fit badge badge-outline badge-lg badge-error">{{ order.get_status_display }}</div>
+            </div>
+          {% else %}
+            <div class="flex justify-end">
+              <div class="w-fit badge badge-outline badge-lg badge-success">{{ order.get_status_display }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}
